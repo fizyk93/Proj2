@@ -32,7 +32,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="Analysis.cpp" />
+		<Unit filename="Analysis.h" />
+		<Unit filename="Instance.cpp" />
+		<Unit filename="Instance.h" />
+		<Unit filename="Process.cpp" />
+		<Unit filename="Process.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="myList.cpp" />
+		<Unit filename="myList.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

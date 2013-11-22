@@ -1,12 +1,14 @@
 #include "Instance.h"
 
-Instance::Instance(list<Process> processList, std::ofstream *f)
+Instance::Instance(list<Process> processList, std::ofstream *f, int changeTime)
 {
     this->processList = processList;
     output = f;
     counter = Process::maxProcs;
     for(long i=counter; i >= 1; i--) processors.push_back(i);
+    this->changeTime = changeTime;
     timer = 0;
+    Analysis::unsucceed = 0;
 }
 
 void Instance::startScheduler()
@@ -43,30 +45,34 @@ void Instance::startScheduler()
                 timer = processList.front().ready;
                 updateReady();
                 readyList.sort(sortReady);
-                runProc();
             }
             else
             {
                 timer = finishTimes.front();
                 while(finishTimes.front() == timer) finishTimes.pop_front();
                 terminateProc();
-                runProc();
             }
         }
-        if(!processList.empty() && finishTimes.empty())
+        else if(!processList.empty() && finishTimes.empty())
         {
             timer = processList.front().ready;
             updateReady();
             readyList.sort(sortReady);
-            runProc();
         }
-        if(processList.empty() && !finishTimes.empty())
+        else if(processList.empty() && !finishTimes.empty())
         {
             timer = finishTimes.front();
             while(finishTimes.front() == timer) finishTimes.pop_front();
             terminateProc();
-            runProc();
         }
+
+        if(timer == changeTime || finishTimes.front() == changeTime || finishTimes.front() == changeTime)
+        {
+            cout << "\nHello! " << timer << endl;
+            readyList.sort(sortChange);
+        }
+        runProc();
+
     }
 
     endTime = clock();
@@ -97,6 +103,12 @@ bool Instance::sortReady(Process a, Process b)
 {
     return (a.exec > b.exec);
 }
+
+bool Instance::sortChange(Process a, Process b)
+{
+    return (a.exec < b.exec);
+}
+
 /*Funkcja wyszukujaca wykonane procesy i usuwajaca je z listy exec.
 Funkcja jednoczesnie zapisuje takie procesy do pliku wynikowego
 Zwolnione procesory trafiaja ponownie na wektor dostepnych procesorow
@@ -152,7 +164,11 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         {
             it++;
             if(it == readyList.end())
-                if(readyList.empty() || counter == 0) Analysis::succeed++;
+                if(readyList.empty() || counter == 0)
+                {
+                    cout << "Hello!\n";
+                    Analysis::succeed++;
+                }
                 else
                 {
                     analysis.push(Analysis(timer, counter, readyList));
@@ -163,4 +179,15 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         }
     }
     finishTimes.sort(); //lista czasow w ktorych koncza sie zadania jest sortowana
+}
+
+void Instance::printSummary(string filename)
+{
+    cout << "Czas uszeregowania na podstawie p_j: " << timer << endl;
+    //Wypisanie wiadomosci koncowych oraz wyczyszczenie tablic
+    cout << "Plik wynikowy " << filename << " zostal pomyslnie zapisany.\n";
+
+    cout << "Czas wykonania programu: " << (float)(endTime-startTime)/CLOCKS_PER_SEC << "s" << endl;
+
+    analysis.print();
 }

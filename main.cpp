@@ -32,13 +32,22 @@ int main(int argc, char* argv[])
 
     mainInstance->startScheduler();
 
-    cout << "Czas uszeregowania na podstawie p_j: " << mainInstance->timer << endl;
-    //Wypisanie wiadomosci koncowych oraz wyczyszczenie tablic
-    cout << "Plik wynikowy " << filename << " zostal pomyslnie zapisany.\n";
+    mainInstance->printSummary(filename);
+
     output.close();
 
-    cout << "Czas wykonania programu: " << (float)(mainInstance->endTime-mainInstance->startTime)/CLOCKS_PER_SEC << "s" << endl;
-    mainInstance->analysis.print();
+    filename = argv[1];
+    filename = filename.substr(0,filename.find("."));
+    filename+="_new.txt";
+    output.open(filename.c_str());
+
+    Instance *newInstance = new Instance(processList, &output, mainInstance->analysis.begin()->time);
+
+    newInstance->startScheduler();
+    newInstance->printSummary(filename);
+
+    output.close();
+    delete newInstance;
 
     delete mainInstance;
 

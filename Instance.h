@@ -24,10 +24,11 @@ public:
     list<long> finishTimes;
     std::ofstream *output;
     int counter;
-    long timer;
+    long timer, changeTime;
     clock_t startTime, endTime;
 
-    Instance(list<Process> processList, std::ofstream *f);
+
+    Instance(list<Process> processList, std::ofstream *f, int changeTime = -1);
 
     void startScheduler();
 
@@ -37,12 +38,13 @@ public:
     void updateReady();
     //Wlasna funkcja sortujaca
     static bool sortReady(Process a, Process b);
+    static bool sortChange(Process a, Process b);
     //Funkcja usuwajaca wykonane procesy z programu
     void terminateProc();
     //Funkcja przydzielajaca procesory oraz przenoszaca proces z "ready" na "exec"
     void runProc();
 
-
+    void printSummary(string filename);
 
 
 };
