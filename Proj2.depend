@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1385083793 source:e:\ok\proj2\main.cpp
+	<iostream>
+	<list>
+	<fstream>
+	"procList.h"
+	<ctime>
+
+1385083793 e:\ok\proj2\proclist.h
+	<vector>
+	<list>
+	<cstdio>
+
+1385083793 source:e:\ok\proj2\proclist.cpp
+	<iostream>
+	<string>
+	<sstream>
+	<stdlib.h>
+	<fstream>
+	<cstdlib>
+	<algorithm>
+	<list>
+	"procList.h"
+
