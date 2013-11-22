@@ -3,7 +3,7 @@
 void myList::push(Analysis x)
 {
     std::list<Analysis>::iterator it = this->begin();
-    while(it->unusedProcs > x.unusedProcs && it != end()) it++;
+    while(it->unusedProcs >= x.unusedProcs && it != end()) it++;
     this->insert(it, x);
     if(this->size() > 5)
         this->pop_back();

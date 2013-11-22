@@ -9,6 +9,8 @@ Instance::Instance(list<Process> processList, std::ofstream *f, int changeTime)
     this->changeTime = changeTime;
     timer = 0;
     Analysis::unsucceed = 0;
+    change = false;
+
 }
 
 void Instance::startScheduler()
@@ -44,7 +46,7 @@ void Instance::startScheduler()
             {
                 timer = processList.front().ready;
                 updateReady();
-                readyList.sort(sortReady);
+                //readyList.sort(sortReady);
             }
             else
             {
@@ -57,7 +59,7 @@ void Instance::startScheduler()
         {
             timer = processList.front().ready;
             updateReady();
-            readyList.sort(sortReady);
+            //readyList.sort(sortReady);
         }
         else if(processList.empty() && !finishTimes.empty())
         {
@@ -66,9 +68,10 @@ void Instance::startScheduler()
             terminateProc();
         }
 
-        if(timer == changeTime || finishTimes.front() == changeTime || finishTimes.front() == changeTime)
+//        if(timer == changeTime || finishTimes.front() == changeTime || processList.front().ready == changeTime)
+        if(change)
         {
-            cout << "Hello! " << timer << endl;
+            //cout << "Hello! " << timer << " Unused procs: " << counter <<endl;
             readyList.sort(sortChange);
         }
         runProc();
@@ -87,7 +90,7 @@ bool Instance::sortReady(Process a, Process b)
 
 bool Instance::sortChange(Process a, Process b)
 {
-    return (a.exec < b.exec);
+    return (a.nproc > b.nproc);
 }
 
 //Funkcja wypisuje wszystkie procesy na konsole
@@ -107,7 +110,7 @@ void Instance::updateReady()
         it++;
         processList.pop_front();
     }
-    readyList.sort(sortReady);
+    //readyList.sort(sortReady);
 
 }
 
@@ -142,8 +145,9 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
     //list<Process> tmp = *r;
     for(list<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
     {
-        if(it->nproc <= counter) //jezeli zadanie
+        if(it->nproc <= counter && !(change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime)) //jezeli zadanie
         {
+            //if(change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime) continue;
             it->start = timer; //faktyczny czas rozpoczecia zadania
             it->finish = timer + it->exec; //faktyczny czas zakonczenia zadania
             long i = it->nproc; //dodawanie procesorow do zadania
@@ -159,6 +163,8 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
             //if(it->processors.size() != it->nproc) { cout << "BLAD " << it->id; system("PAUSE"); }
             execList.push_back(*it); //zadanie trafia na liste procesow wykonywanych
             finishTimes.push_back(it->finish); //czas zakonczenia zadania trafia na liste zawierajaca czasy zakonczenia dzialajacych zadan
+            if(it->finish >= changeTime && timer <= changeTime) change = true;
+            if(timer >= changeTime) change = false;
             counter -= it->nproc;
             it=readyList.erase(it);
 
@@ -167,9 +173,9 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         {
             it++;
             if(it == readyList.end())
-                if(readyList.empty() || counter == 0)
+                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime))
                 {
-                    cout << "Hello!\n";
+//                    cout << "Hello!\n";
                     Analysis::succeed++;
                 }
                 else
@@ -177,8 +183,6 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
                     analysis.push(Analysis(timer, counter, readyList));
                     Analysis::unsucceed++;
                 }
-
-
         }
     }
     finishTimes.sort(); //lista czasow w ktorych koncza sie zadania jest sortowana

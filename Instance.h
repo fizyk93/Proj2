@@ -26,6 +26,7 @@ public:
     int counter;
     long timer, changeTime;
     clock_t startTime, endTime;
+    bool change;
 
 
     Instance(list<Process> processList, std::ofstream *f, int changeTime = -1);

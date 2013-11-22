@@ -18,7 +18,7 @@ void Analysis::print()
 {
     printf("Time: %d\tUnused processors: %d\t Ready tasks: ", time, unusedProcs);
     for(list<Process>::iterator it = readyTasks.begin(); it != readyTasks.end(); it++)
-        printf("%d:%d ", it->id, it->nproc);
+        printf("%d:%d:%d ", it->id, it->nproc, it->ready);
     printf("\n");
 }
 
