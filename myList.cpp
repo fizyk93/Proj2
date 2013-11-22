@@ -14,5 +14,5 @@ void myList::print()
     for(std::list<Analysis>::iterator it = begin(); it != end(); it++)
         it->print();
 
-    std::cout << "\nFailure: " << Analysis::unsucceed << "\tSuccess: " << Analysis::succeed;
+    std::cout << "\nFailure: " << Analysis::unsucceed << "\tSuccess: " << Analysis::succeed << std::endl;
 }

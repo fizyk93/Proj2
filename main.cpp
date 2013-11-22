@@ -10,6 +10,9 @@
 //Maksymalny czas trwania programu w milisekundach
 #define TIME 180000 //3 minuty
 ///TESTOWY KOMENTARZ
+
+///Dodaje kolejny kretynski komentarz
+
 using namespace std;
 
 std::list<Process> readProcList(int argc, char** argv);

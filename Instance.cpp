@@ -68,7 +68,7 @@ void Instance::startScheduler()
 
         if(timer == changeTime || finishTimes.front() == changeTime || finishTimes.front() == changeTime)
         {
-            cout << "\nHello! " << timer << endl;
+            cout << "Hello! " << timer << endl;
             readyList.sort(sortChange);
         }
         runProc();
@@ -78,6 +78,18 @@ void Instance::startScheduler()
     endTime = clock();
 
 }
+
+//Wlasna funkcja sortowania potrzebna do dzialania programu
+bool Instance::sortReady(Process a, Process b)
+{
+    return (a.exec > b.exec);
+}
+
+bool Instance::sortChange(Process a, Process b)
+{
+    return (a.exec < b.exec);
+}
+
 //Funkcja wypisuje wszystkie procesy na konsole
 void Instance::printProcList(list<Process> p)
 {
@@ -98,16 +110,7 @@ void Instance::updateReady()
     readyList.sort(sortReady);
 
 }
-//Wlasna funkcja sortowania potrzebna do dzialania programu
-bool Instance::sortReady(Process a, Process b)
-{
-    return (a.exec > b.exec);
-}
 
-bool Instance::sortChange(Process a, Process b)
-{
-    return (a.exec < b.exec);
-}
 
 /*Funkcja wyszukujaca wykonane procesy i usuwajaca je z listy exec.
 Funkcja jednoczesnie zapisuje takie procesy do pliku wynikowego
