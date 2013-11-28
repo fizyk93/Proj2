@@ -18,7 +18,10 @@ public:
 
 	void print();
 
-	bool operator<(Analysis b);
+	bool operator<(Analysis b) const;
+
+	bool operator>(Analysis b) const;
+
 };
 
 #endif // ANALYSIS_H

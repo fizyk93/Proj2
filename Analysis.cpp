@@ -22,7 +22,12 @@ void Analysis::print()
     printf("\n");
 }
 
-bool Analysis::operator<(Analysis b)
+bool Analysis::operator<(Analysis b) const
+{
+    return (unusedProcs<b.unusedProcs);
+}
+
+bool Analysis::operator>(Analysis b) const
 {
     return (unusedProcs>b.unusedProcs);
 }

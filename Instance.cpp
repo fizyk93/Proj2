@@ -10,6 +10,7 @@ Instance::Instance(list<Process> processList, std::ofstream *f, int changeTime)
     timer = 0;
     Analysis::unsucceed = 0;
     change = false;
+    analysis = myList<Analysis>(3);
 
 }
 
@@ -180,7 +181,7 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
                 }
                 else
                 {
-                    analysis.push(Analysis(timer, counter, readyList));
+                    analysis.push_front(Analysis(timer, counter, readyList));
                     Analysis::unsucceed++;
                 }
         }
@@ -196,5 +197,5 @@ void Instance::printSummary(string filename)
 
     cout << "Czas wykonania programu: " << (float)(endTime-startTime)/CLOCKS_PER_SEC << "s" << endl;
 
-    analysis.print();
+    //analysis.print();
 }

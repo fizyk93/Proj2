@@ -20,7 +20,8 @@ class Instance
 public:
     vector<int> processors;
     list<Process> processList, readyList, execList, tmp;
-    myList analysis;
+    myList<Analysis> analysis;
+    myList<int> test;
     list<long> finishTimes;
     std::ofstream *output;
     int counter;

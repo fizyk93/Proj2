@@ -38,34 +38,34 @@ int main(int argc, char* argv[])
     mainInstance->printSummary(filename);
 
     output.close();
-
-    filename = argv[1];
-    filename = filename.substr(0,filename.find("."));
-    filename+="_new.txt";
-    output.open(filename.c_str());
-
-    Instance *newInstance = new Instance(processList, &output, mainInstance->analysis.begin()->time);
-
-    newInstance->startScheduler();
-    newInstance->printSummary(filename);
-
-    output.close();
-
-    filename = argv[1];
-    filename = filename.substr(0,filename.find("."));
-    filename+="_new2.txt";
-    output.open(filename.c_str());
-
-    Instance *new2Instance = new Instance(processList, &output, newInstance->analysis.begin()->time);
-
-    new2Instance->startScheduler();
-    new2Instance->printSummary(filename);
-
-    output.close();
-
-    delete new2Instance;
-
-    delete newInstance;
+//
+//    filename = argv[1];
+//    filename = filename.substr(0,filename.find("."));
+//    filename+="_new.txt";
+//    output.open(filename.c_str());
+//
+//    Instance *newInstance = new Instance(processList, &output, mainInstance->analysis.begin()->time);
+//
+//    newInstance->startScheduler();
+//    newInstance->printSummary(filename);
+//
+//    output.close();
+//
+//    filename = argv[1];
+//    filename = filename.substr(0,filename.find("."));
+//    filename+="_new2.txt";
+//    output.open(filename.c_str());
+//
+//    Instance *new2Instance = new Instance(processList, &output, newInstance->analysis.begin()->time);
+//
+//    new2Instance->startScheduler();
+//    new2Instance->printSummary(filename);
+//
+//    output.close();
+//
+//    delete new2Instance;
+//
+//    delete newInstance;
 
     delete mainInstance;
 
