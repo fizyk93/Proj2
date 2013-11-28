@@ -107,7 +107,7 @@ void Instance::updateReady()
 {
     for(list<Process>::iterator it = processList.begin(); it != processList.end() && it->ready <= timer; )
     {
-        readyList.push_back(processList.front());
+        readyList.push_front(processList.front());
         it++;
         processList.pop_front();
     }
@@ -144,7 +144,7 @@ void Instance::terminateProc()
 void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, list<Process> *r, long *counter,vector<int> *proc, myList& an)
 {
     //list<Process> tmp = *r;
-    for(list<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
+    for(myList<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
     {
         if(it->nproc <= counter && !(change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime)) //jezeli zadanie
         {

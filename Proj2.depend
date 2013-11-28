@@ -32,13 +32,13 @@
 	"Process.h"
 	<iostream>
 
-1385085656 e:\ok\proj2\process.h
+1385671740 e:\ok\proj2\process.h
 	<vector>
 
-1385670667 source:e:\ok\proj2\instance.cpp
+1385671613 source:e:\ok\proj2\instance.cpp
 	"Instance.h"
 
-1385667362 e:\ok\proj2\instance.h
+1385671613 e:\ok\proj2\instance.h
 	<vector>
 	<list>
 	<fstream>

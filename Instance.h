@@ -19,9 +19,9 @@ class Instance
 {
 public:
     vector<int> processors;
-    list<Process> processList, readyList, execList, tmp;
+    list<Process> processList, execList, tmp;
+    myList<Process> readyList;
     myList<Analysis> analysis;
-    myList<int> test;
     list<long> finishTimes;
     std::ofstream *output;
     int counter;

@@ -12,9 +12,14 @@ public:
 
     Process(int id, int ready, int exec, int nproc);
 
-    bool operator< (Process& b)
+    bool operator< (const Process& b)
     {
         return (this->ready < b.ready);
+    }
+
+    bool operator> (const Process& b)
+    {
+        return (this->ready > b.ready);
     }
 };
 
