@@ -24,6 +24,7 @@ std::list<Process> readProcList(int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
+        srand(time(NULL));
     //Sprawdzenie czy podane zostaly wszystkie niezbedne informacje
     if(argc<=1) { cout << "PARALLEL TASKS SCHEDULING\nAby uruchomic podaj na wejsciu:\n[plik zrodlowy] [ilosc linii do wczytania|opcjonalne]\n"; return 0; }
     //vector zawierajacy wszystkie procesory dostepne w danej chwili
@@ -42,11 +43,12 @@ int main(int argc, char* argv[])
 
     mainInstance->printSummary(filename);
 
-    Analysis::changeTime.push_back(mainInstance->analysis.begin()->time);
+//    Analysis::changeTime.push_back(mainInstance->analysis.begin()->time);
 
+    Analysis::changeTime.assign(mainInstance->a.begin(), mainInstance->a.end());
     for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
     {
-        cout << "changeTime: " << *it << endl;
+//        cout << "changeTime: " << *it << endl;
     }
 
     output.close();
@@ -57,22 +59,22 @@ int main(int argc, char* argv[])
     output.open(filename.c_str());
 
     Instance *newInstance = new Instance(processList, &output);
-
+    newInstance->timer+=1000;
     newInstance->startScheduler();
     newInstance->printSummary(filename);
 
-    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
-    {
-        if(it->time > Analysis::changeTime.back()+1000)
-        {
-            Analysis::changeTime.push_back(it->time);
-            break;
-        }
-    }
-
+//    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
+//    {
+//        if(it->time > Analysis::changeTime.back()+1000)
+//        {
+//            Analysis::changeTime.push_back(it->time);
+//            break;
+//        }
+//    }
+    Analysis::changeTime.merge(newInstance->a);
     for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
     {
-        cout << "changeTime: " << *it << endl;
+        //cout << "changeTime: " << *it << endl;
     }
 
     output.close();

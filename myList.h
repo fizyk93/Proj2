@@ -49,7 +49,7 @@ void myList<T>::push_back(const T& val)
 template <class T>
 void myList<T>::shuffle()
 {
-    std::vector<int> v;
+    std::vector<T> v;
     v.assign(this->begin(), this->end());
     srand(time(NULL));
     random_shuffle(v.begin(), v.end());

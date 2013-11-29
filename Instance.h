@@ -22,6 +22,8 @@ public:
     list<Process> processList, execList, tmp;
     myList<Process> readyList;
     myList<Analysis> analysis;
+    list<long> a;
+    list<long>::iterator ita;
     list<long> finishTimes;
     std::ofstream *output;
     int counter;

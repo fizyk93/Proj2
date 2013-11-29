@@ -22,36 +22,28 @@ Instance::Instance(list<Process> processList, std::ofstream *f)
     Analysis::unsucceed = 0;
     change = false;
     analysis = myList<Analysis>(10);
+    ita = a.begin();
 
 }
 
 void Instance::startScheduler()
 {
     startTime = clock();
+
     while(!processList.empty() || !readyList.empty() || !execList.empty())
     {
-        //cout << "Procesy w procesy:" << procesy.size() << "\nProcesy w ready " << ready.size() << "\nProcesy w exec " << exec.size() << "\nProcesy w finishTimes " << finishTimes.size() << "\nT: " << timer << endl << endl;
-        //Sprawdzenie czy przekroczony zostal limit czasowy i wygenerowanie poprawnego wyniku gdyby przekroczono czas
-//        if((float)(clock()-startTime)/CLOCKS_PER_SEC * 1000 >= TIME)
-//        {
-//            cout << "Osiagniety limit czasowy!\n";
-//            output->close();
-//            output->open(filename.c_str(),std::ofstream::trunc);
-//            timer = 0;
-//            for(list<Process>::iterator it = tmp.begin(); it != tmp.end() && !tmp.empty();it++)
-//            {
-//                (*output) << it->id << " " << timer << " " << timer+it->exec << " ";
-//                timer+=it->exec;
-//                for(int i=1;i<=it->nproc;i++) output << i << " ";
-//                output << "\n";
-//            }
-//            tmp.clear();
-//            break;
-//        }
-
         //Program przesuwa sie o pewna jednostke czasu, wynikajaca z dwoch list
         //Listy procesow wchodzacych oraz listy czasow zakonczenia aktualnie dzialajacych zadan
         //Program wybiera z obu list ta, na ktorej znajduje sie najblizsze zadanie i przeskakuje do niego
+
+        if(rand()%100 == rand()%100)
+        {
+            a.push_back(timer);
+        }
+
+        while(timer >= *changeIterator && changeIterator != Analysis::changeTime.end())
+            changeIterator++;
+
         if(!processList.empty() && !finishTimes.empty())
         {
             if(processList.front().ready < finishTimes.front())
@@ -86,7 +78,17 @@ void Instance::startScheduler()
             //cout << "Hello! " << timer << " Unused procs: " << counter <<endl;
             readyList.sort(sortChange);
         }
+
+        if(timer >= *changeIterator && changeIterator != Analysis::changeTime.end() && !readyList.empty())
+        {
+            cout << readyList.begin()->id << "\t";
+            readyList.shuffle();
+
+            cout << readyList.begin()->id << "\t" << readyList.size() << "\n";
+        }
+
         runProc();
+
 
     }
 
@@ -159,7 +161,7 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
     for(myList<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
     {
 
-        if(it->nproc <= counter && !(change && (counter - it->nproc) < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator)) //jezeli zadanie
+        if(it->nproc <= counter) //jezeli zadanie
         {
 //            if(*changeIterator == -1) cout << "Hello!\n";
 //            cout << "#################\t" << timer;
@@ -180,12 +182,12 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
             //if(it->processors.size() != it->nproc) { cout << "BLAD " << it->id; system("PAUSE"); }
             execList.push_back(*it); //zadanie trafia na liste procesow wykonywanych
             finishTimes.push_back(it->finish); //czas zakonczenia zadania trafia na liste zawierajaca czasy zakonczenia dzialajacych zadan
-            if(timer >= *changeIterator)
-            {
-                change = false;
-                changeIterator++;
-            }
-            if(it->finish >= *changeIterator && timer <= *changeIterator) change = true;
+//            if(timer >= *changeIterator)
+//            {
+//                change = false;
+//                changeIterator++;
+//            }
+//            if(it->finish >= *changeIterator && timer <= *changeIterator) change = true;
 
             counter -= it->nproc;
             it=readyList.erase(it);
@@ -194,17 +196,17 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         else
         {
             it++;
-            if(it == readyList.end())
-                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator))
-                {
-//                    cout << "Hello!\n";
-                    Analysis::succeed++;
-                }
-                else
-                {
-                    analysis.push_front(Analysis(timer, counter, readyList));
-                    Analysis::unsucceed++;
-                }
+//            if(it == readyList.end())
+//                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator))
+//                {
+////                    cout << "Hello!\n";
+//                    Analysis::succeed++;
+//                }
+//                else
+//                {
+//                    analysis.push_front(Analysis(timer, counter, readyList));
+//                    Analysis::unsucceed++;
+//                }
         }
     }
     finishTimes.sort(); //lista czasow w ktorych koncza sie zadania jest sortowana
