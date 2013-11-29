@@ -14,12 +14,12 @@ public:
 
     bool operator< (const Process& b)
     {
-        return (this->ready < b.ready);
+        return (this->exec < b.exec);
     }
 
     bool operator> (const Process& b)
     {
-        return (this->ready > b.ready);
+        return (this->exec > b.exec);
     }
 };
 

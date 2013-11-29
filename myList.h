@@ -33,6 +33,7 @@ void myList<T>::push_front(const T& val)
         it++;
     }
     this->insert(it, val);
+    if(this->size() > this->limit && this->limit > 0) this->pop_back();
 }
 
 template <class T>
@@ -60,6 +61,8 @@ void myList<T>::print()
 {
     for(typename myList<T>::iterator it = this->begin(); it != this->end(); it++)
         it->print();
+
+    std::cout << std::endl;
 }
 
 //class myList :

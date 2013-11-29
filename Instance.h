@@ -25,12 +25,16 @@ public:
     list<long> finishTimes;
     std::ofstream *output;
     int counter;
-    long timer, changeTime;
+    long timer;
+    list<long>::iterator changeIterator;
     clock_t startTime, endTime;
     bool change;
 
+    static list<Analysis> changeTime;
 
-    Instance(list<Process> processList, std::ofstream *f, int changeTime = -1);
+    static std::list<Analysis> listInitialize();
+
+    Instance(list<Process> processList, std::ofstream *f);
 
     void startScheduler();
 

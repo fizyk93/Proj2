@@ -1,16 +1,27 @@
 #include "Instance.h"
 
-Instance::Instance(list<Process> processList, std::ofstream *f, int changeTime)
+list<Analysis> Instance::changeTime = listInitialize();
+
+list<Analysis> Instance::listInitialize()
+{
+    list<Analysis> l;
+    list<Process> p;
+    p.push_back(Process(-1, -1, -1, -1));
+    l.push_back(Analysis(-1, -1, p));
+    return l;
+}
+
+Instance::Instance(list<Process> processList, std::ofstream *f)
 {
     this->processList = processList;
     output = f;
     counter = Process::maxProcs;
     for(long i=counter; i >= 1; i--) processors.push_back(i);
-    this->changeTime = changeTime;
+    changeIterator = Analysis::changeTime.begin();
     timer = 0;
     Analysis::unsucceed = 0;
     change = false;
-    analysis = myList<Analysis>(3);
+    analysis = myList<Analysis>(10);
 
 }
 
@@ -91,6 +102,7 @@ bool Instance::sortReady(Process a, Process b)
 
 bool Instance::sortChange(Process a, Process b)
 {
+//    cout << "hello!\n";
     return (a.nproc > b.nproc);
 }
 
@@ -146,9 +158,13 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
     //list<Process> tmp = *r;
     for(myList<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
     {
-        if(it->nproc <= counter && !(change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime)) //jezeli zadanie
+
+        if(it->nproc <= counter && !(change && (counter - it->nproc) < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator)) //jezeli zadanie
         {
-            //if(change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime) continue;
+//            if(*changeIterator == -1) cout << "Hello!\n";
+//            cout << "#################\t" << timer;
+//            printProcList(readyList);
+
             it->start = timer; //faktyczny czas rozpoczecia zadania
             it->finish = timer + it->exec; //faktyczny czas zakonczenia zadania
             long i = it->nproc; //dodawanie procesorow do zadania
@@ -164,8 +180,13 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
             //if(it->processors.size() != it->nproc) { cout << "BLAD " << it->id; system("PAUSE"); }
             execList.push_back(*it); //zadanie trafia na liste procesow wykonywanych
             finishTimes.push_back(it->finish); //czas zakonczenia zadania trafia na liste zawierajaca czasy zakonczenia dzialajacych zadan
-            if(it->finish >= changeTime && timer <= changeTime) change = true;
-            if(timer >= changeTime) change = false;
+            if(timer >= *changeIterator)
+            {
+                change = false;
+                changeIterator++;
+            }
+            if(it->finish >= *changeIterator && timer <= *changeIterator) change = true;
+
             counter -= it->nproc;
             it=readyList.erase(it);
 
@@ -174,7 +195,7 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         {
             it++;
             if(it == readyList.end())
-                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < changeTime))
+                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator))
                 {
 //                    cout << "Hello!\n";
                     Analysis::succeed++;
@@ -197,5 +218,5 @@ void Instance::printSummary(string filename)
 
     cout << "Czas wykonania programu: " << (float)(endTime-startTime)/CLOCKS_PER_SEC << "s" << endl;
 
-    //analysis.print();
+    analysis.print();
 }

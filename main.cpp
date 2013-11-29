@@ -15,6 +15,11 @@
 
 using namespace std;
 
+bool mysort(Process a, Process b)
+{
+    return (a.ready < b.ready);
+}
+
 std::list<Process> readProcList(int argc, char** argv);
 
 int main(int argc, char* argv[])
@@ -37,35 +42,70 @@ int main(int argc, char* argv[])
 
     mainInstance->printSummary(filename);
 
+    Analysis::changeTime.push_back(mainInstance->analysis.begin()->time);
+
+    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+    {
+        cout << "changeTime: " << *it << endl;
+    }
+
     output.close();
-//
-//    filename = argv[1];
-//    filename = filename.substr(0,filename.find("."));
-//    filename+="_new.txt";
-//    output.open(filename.c_str());
-//
-//    Instance *newInstance = new Instance(processList, &output, mainInstance->analysis.begin()->time);
-//
-//    newInstance->startScheduler();
-//    newInstance->printSummary(filename);
-//
-//    output.close();
-//
-//    filename = argv[1];
-//    filename = filename.substr(0,filename.find("."));
-//    filename+="_new2.txt";
-//    output.open(filename.c_str());
-//
-//    Instance *new2Instance = new Instance(processList, &output, newInstance->analysis.begin()->time);
-//
+
+    filename = argv[1];
+    filename = filename.substr(0,filename.find("."));
+    filename+="_new.txt";
+    output.open(filename.c_str());
+
+    Instance *newInstance = new Instance(processList, &output);
+
+    newInstance->startScheduler();
+    newInstance->printSummary(filename);
+
+    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
+    {
+        if(it->time > Analysis::changeTime.back()+1000)
+        {
+            Analysis::changeTime.push_back(it->time);
+            break;
+        }
+    }
+
+    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+    {
+        cout << "changeTime: " << *it << endl;
+    }
+
+    output.close();
+
+    filename = argv[1];
+    filename = filename.substr(0,filename.find("."));
+    filename+="_new2.txt";
+    output.open(filename.c_str());
+
+//    Instance *new2Instance = new Instance(processList, &output);
+
 //    new2Instance->startScheduler();
 //    new2Instance->printSummary(filename);
+//
+//    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
+//    {
+//        if(it->time > Analysis::changeTime.back()+1000)
+//        {
+//            Analysis::changeTime.push_back(it->time);
+//            break;
+//        }
+//    }
+//
+//    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+//    {
+//        cout << "changeTime: " << *it << endl;
+//    }
 //
 //    output.close();
 //
 //    delete new2Instance;
 //
-//    delete newInstance;
+    delete newInstance;
 
     delete mainInstance;
 
@@ -163,7 +203,7 @@ std::list<Process> readProcList(int argc, char** argv)
     input.close();
 
     // funkcja sortuje listê wg. czasu gotowosci procesu
-    processList.sort();
+    processList.sort(mysort);
 
     return processList;
 }
