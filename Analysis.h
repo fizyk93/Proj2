@@ -15,7 +15,7 @@ public:
 	std::list<Process> readyTasks;
 	static int succeed, unsucceed;
 	static std::list<long> changeTime;
-
+	static std::list<long> oldChangeTime;
 	static std::list<long> listInitialize();
 
     Analysis(long t, int u, std::list<Process> r);

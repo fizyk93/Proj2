@@ -81,10 +81,10 @@ void Instance::startScheduler()
 
         if(timer >= *changeIterator && changeIterator != Analysis::changeTime.end() && !readyList.empty())
         {
-            cout << readyList.begin()->id << "\t";
+            //cout << readyList.begin()->id << "\t";
             readyList.shuffle();
 
-            cout << readyList.begin()->id << "\t" << readyList.size() << "\n";
+            //cout << readyList.begin()->id << "\t" << readyList.size() << "\n";
         }
 
         runProc();

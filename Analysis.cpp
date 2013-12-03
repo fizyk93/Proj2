@@ -7,8 +7,9 @@ using namespace std;
 int Analysis::succeed = 0;
 int Analysis::unsucceed = 0;
 
-list<long> Analysis::changeTime = listInitialize();
-
+//list<long> Analysis::changeTime = listInitialize();
+list<long> Analysis::changeTime = list<long>();
+list<long> Analysis::oldChangeTime = list<long>();
 list<long> Analysis::listInitialize()
 {
     list<long> l;
@@ -26,9 +27,9 @@ Analysis::Analysis(long t, int u, std::list<Process> r)
 
 void Analysis::print()
 {
-    printf("Time: %d\tUnused processors: %d\t Ready tasks: ", time, unusedProcs);
+    printf("Time: %ld\tUnused processors: %d\t Ready tasks: ", time, unusedProcs);
     for(list<Process>::iterator it = readyTasks.begin(); it != readyTasks.end(); it++)
-        printf("%d:%d:%d ", it->id, it->nproc, it->ready);
+        printf("%ld:%ld:%ld ", it->id, it->nproc, it->ready);
     printf("\n");
 }
 

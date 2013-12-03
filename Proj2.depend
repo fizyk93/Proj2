@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1385738517 source:e:\ok\proj2\main.cpp
+1386065093 source:e:\ok\proj2\main.cpp
 	<iostream>
 	<list>
 	<fstream>
@@ -22,12 +22,12 @@
 	<list>
 	"procList.h"
 
-1385717760 source:e:\ok\proj2\analysis.cpp
+1386063812 source:e:\ok\proj2\analysis.cpp
 	"Analysis.h"
 	<cstdio>
 	<list>
 
-1385680557 e:\ok\proj2\analysis.h
+1386063776 e:\ok\proj2\analysis.h
 	<list>
 	"Process.h"
 	<iostream>
@@ -36,7 +36,7 @@
 1385675476 e:\ok\proj2\process.h
 	<vector>
 
-1385738317 source:e:\ok\proj2\instance.cpp
+1386065429 source:e:\ok\proj2\instance.cpp
 	"Instance.h"
 
 1385733452 e:\ok\proj2\instance.h

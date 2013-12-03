@@ -24,10 +24,12 @@ std::list<Process> readProcList(int argc, char** argv);
 
 int main(int argc, char* argv[])
 {
-        srand(time(NULL));
+    srand(time(NULL));
     //Sprawdzenie czy podane zostaly wszystkie niezbedne informacje
     if(argc<=1) { cout << "PARALLEL TASKS SCHEDULING\nAby uruchomic podaj na wejsciu:\n[plik zrodlowy] [ilosc linii do wczytania|opcjonalne]\n"; return 0; }
     //vector zawierajacy wszystkie procesory dostepne w danej chwili
+
+    long bestTime;
 
     ofstream output;
     string filename = argv[1];
@@ -43,13 +45,13 @@ int main(int argc, char* argv[])
 
     mainInstance->printSummary(filename);
 
-//    Analysis::changeTime.push_back(mainInstance->analysis.begin()->time);
+    bestTime = mainInstance->timer;
 
-    Analysis::changeTime.assign(mainInstance->a.begin(), mainInstance->a.end());
-    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
-    {
+    Analysis::changeTime = mainInstance->a;
+//    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+//    {
 //        cout << "changeTime: " << *it << endl;
-    }
+//    }
 
     output.close();
 
@@ -58,58 +60,39 @@ int main(int argc, char* argv[])
     filename+="_new.txt";
     output.open(filename.c_str());
 
-    Instance *newInstance = new Instance(processList, &output);
-    newInstance->timer+=1000;
-    newInstance->startScheduler();
-    newInstance->printSummary(filename);
-
-//    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
-//    {
-//        if(it->time > Analysis::changeTime.back()+1000)
-//        {
-//            Analysis::changeTime.push_back(it->time);
-//            break;
-//        }
-//    }
-    Analysis::changeTime.merge(newInstance->a);
-    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+    for(int i =0 ; i < 100; i++)
     {
-        //cout << "changeTime: " << *it << endl;
+        Instance *newInstance = new Instance(processList, &output);
+        newInstance->timer+=1000;
+        newInstance->startScheduler();
+        newInstance->printSummary(filename);
+
+        if(newInstance->timer > bestTime)
+        {
+            Analysis::changeTime = Analysis::oldChangeTime;
+        }
+        else
+        {
+            bestTime = newInstance->timer;
+            Analysis::oldChangeTime = Analysis::changeTime;
+        }
+
+        Analysis::changeTime.merge(newInstance->a);
+        Analysis::changeTime.unique();
+//        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
+//        {
+//            cout << "changeTime: " << *it << endl;
+//        }
+
+        output.close();
+
+        delete newInstance;
+
     }
 
-    output.close();
-
-    filename = argv[1];
-    filename = filename.substr(0,filename.find("."));
-    filename+="_new2.txt";
-    output.open(filename.c_str());
-
-//    Instance *new2Instance = new Instance(processList, &output);
-
-//    new2Instance->startScheduler();
-//    new2Instance->printSummary(filename);
-//
-//    for(myList<Analysis>::iterator it = newInstance->analysis.begin(); it != newInstance->analysis.end(); it++)
-//    {
-//        if(it->time > Analysis::changeTime.back()+1000)
-//        {
-//            Analysis::changeTime.push_back(it->time);
-//            break;
-//        }
-//    }
-//
-//    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
-//    {
-//        cout << "changeTime: " << *it << endl;
-//    }
-//
-//    output.close();
-//
-//    delete new2Instance;
-//
-    delete newInstance;
-
     delete mainInstance;
+
+    cout << "mainInstance: " << mainInstance->timer << " bestTime: " << bestTime << endl;
 
     return 0;
 }
