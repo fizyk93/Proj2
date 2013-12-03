@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include "Instance.h"
 
 //Maksymalny czas trwania programu w milisekundach
@@ -60,22 +61,44 @@ int main(int argc, char* argv[])
     filename+="_new.txt";
     output.open(filename.c_str());
 
-    for(int i =0 ; i < 100; i++)
+    double temperature;
+    double coolingRate = 0.89;
+    int maxDiscard = 0;
+
+    long tmp = bestTime;
+    int i = 0;
+    while(tmp>0) {
+        i++;
+        tmp/=10;
+    }
+    cout << i-4 << endl << endl;
+    temperature = pow(10,i-4);
+
+    while(temperature>0 && maxDiscard<=20)
     {
         Instance *newInstance = new Instance(processList, &output);
         newInstance->timer+=1000;
         newInstance->startScheduler();
         newInstance->printSummary(filename);
 
-        if(newInstance->timer > bestTime)
+        double chance = (double(rand())/RAND_MAX)*100.0;
+
+        cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  exp((double(bestTime-newInstance->timer)/temperature))*100 << endl;
+
+        if(newInstance->timer > bestTime && chance>exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
             Analysis::changeTime = Analysis::oldChangeTime;
+            maxDiscard++;
+            cout << "Odrzucone\n";
         }
-        else
+        else if(newInstance->timer<=bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
             bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
+            maxDiscard = 0;
+            cout << "Przyjete\n";
         }
+        temperature*=coolingRate;
 
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
@@ -187,7 +210,7 @@ std::list<Process> readProcList(int argc, char** argv)
     cout << "Pominiete bledne wpisy: " << blad << endl << endl;
     input.close();
 
-    // funkcja sortuje listê wg. czasu gotowosci procesu
+    // funkcja sortuje listÄ™ wg. czasu gotowosci procesu
     processList.sort(mysort);
 
     return processList;

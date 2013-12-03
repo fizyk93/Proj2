@@ -36,7 +36,7 @@ void Instance::startScheduler()
         //Listy procesow wchodzacych oraz listy czasow zakonczenia aktualnie dzialajacych zadan
         //Program wybiera z obu list ta, na ktorej znajduje sie najblizsze zadanie i przeskakuje do niego
 
-        if(rand()%5000 == rand()%100)
+        if(rand()%5000 == rand()%5000)
         {
             a.push_back(timer);
         }

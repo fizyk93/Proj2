@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1386065093 source:e:\ok\proj2\main.cpp
+1386065447 source:e:\ok\proj2\main.cpp
 	<iostream>
 	<list>
 	<fstream>
@@ -36,7 +36,7 @@
 1385675476 e:\ok\proj2\process.h
 	<vector>
 
-1386065429 source:e:\ok\proj2\instance.cpp
+1386065791 source:e:\ok\proj2\instance.cpp
 	"Instance.h"
 
 1385733452 e:\ok\proj2\instance.h
