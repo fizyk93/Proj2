@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     output.close();
 
     double temperature;
-    double coolingRate = 0.89;
+    double coolingRate = 0.99;
     int maxDiscard = 0;
 
     long tmp = bestTime;
@@ -67,7 +67,8 @@ int main(int argc, char* argv[])
         tmp/=10;
     }
     cout << i-4 << endl << endl;
-    temperature = pow(10,i-4);
+    //temperature = pow(10,i-4);
+    temperature = 100;
 
     while(temperature>=1 && maxDiscard<=20)
     {
@@ -95,7 +96,7 @@ int main(int argc, char* argv[])
         }
         else if(newInstance->timer<=bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
-            bestTime = newInstance->timer;
+            //bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
             maxDiscard = 0;
             output.close();
@@ -103,7 +104,11 @@ int main(int argc, char* argv[])
             std::rename(tmpfilename.c_str(),filename.c_str());
             cout << "Przyjete\n";
         }
-        temperature*=coolingRate;
+
+        if(newInstance->timer>=bestTime)
+            temperature*=coolingRate;
+        else
+            bestTime = newInstance->timer;
 
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
