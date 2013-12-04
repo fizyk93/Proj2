@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     output.close();
 
     double temperature;
-    double coolingRate = 0.89;
+    double coolingRate = 0.99;
     int maxDiscard = 0;
 
     long tmp = bestTime;
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
         tmp/=10;
     }
     cout << i-4 << endl << endl;
-    temperature = pow(10,i-4);
+    temperature = 100;//pow(10,i-4);
 
     while(temperature>=1 && maxDiscard<=20)
     {
@@ -85,15 +85,7 @@ int main(int argc, char* argv[])
 
         cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  exp((double(bestTime-newInstance->timer)/temperature))*100 << endl;
 
-        if(newInstance->timer > bestTime && chance>exp((double(bestTime-newInstance->timer)/temperature))*100)
-        {
-            Analysis::changeTime = Analysis::oldChangeTime;
-            maxDiscard++;
-            output.close();
-            remove(tmpfilename.c_str());
-            cout << "Odrzucone\n";
-        }
-        else if(newInstance->timer<=bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
+        if(newInstance->timer<bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
             bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
@@ -102,9 +94,17 @@ int main(int argc, char* argv[])
             remove(filename.c_str());
             std::rename(tmpfilename.c_str(),filename.c_str());
             cout << "Przyjete\n";
+            if(newInstance->timer >= bestTime) temperature*=coolingRate;
         }
-        temperature*=coolingRate;
-
+        else if(newInstance->timer >= bestTime)
+        {
+            Analysis::changeTime = Analysis::oldChangeTime;
+            maxDiscard++;
+            output.close();
+            remove(tmpfilename.c_str());
+            cout << "Odrzucone\n";
+            temperature*=coolingRate;
+        }
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
 //        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
