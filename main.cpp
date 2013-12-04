@@ -67,8 +67,12 @@ int main(int argc, char* argv[])
         tmp/=10;
     }
     cout << i-4 << endl << endl;
+<<<<<<< HEAD
     //temperature = pow(10,i-4);
     temperature = 100;
+=======
+    temperature = 100;//pow(10,i-4);
+>>>>>>> origin/Wojtek
 
     while(temperature>=1 && maxDiscard<=20)
     {
@@ -86,15 +90,7 @@ int main(int argc, char* argv[])
 
         cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  exp((double(bestTime-newInstance->timer)/temperature))*100 << endl;
 
-        if(newInstance->timer > bestTime && chance>exp((double(bestTime-newInstance->timer)/temperature))*100)
-        {
-            Analysis::changeTime = Analysis::oldChangeTime;
-            maxDiscard++;
-            output.close();
-            remove(tmpfilename.c_str());
-            cout << "Odrzucone\n";
-        }
-        else if(newInstance->timer<=bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
+        if(newInstance->timer<bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
             //bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
@@ -103,13 +99,26 @@ int main(int argc, char* argv[])
             remove(filename.c_str());
             std::rename(tmpfilename.c_str(),filename.c_str());
             cout << "Przyjete\n";
+            if(newInstance->timer >= bestTime) temperature*=coolingRate;
         }
+        else if(newInstance->timer >= bestTime)
+        {
+            Analysis::changeTime = Analysis::oldChangeTime;
+            maxDiscard++;
+            output.close();
+            remove(tmpfilename.c_str());
+            cout << "Odrzucone\n";
+            temperature*=coolingRate;
+        }
+<<<<<<< HEAD
 
         if(newInstance->timer>=bestTime)
             temperature*=coolingRate;
         else
             bestTime = newInstance->timer;
 
+=======
+>>>>>>> origin/Wojtek
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
 //        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
