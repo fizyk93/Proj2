@@ -69,3 +69,62 @@
 1385085656 source:e:\ok\proj2\process.cpp
 	"Process.h"
 
+1386171925 source:c:\users\wojciech\documents\github\proj2\analysis.cpp
+	"Analysis.h"
+	<cstdio>
+	<list>
+
+1386171925 c:\users\wojciech\documents\github\proj2\analysis.h
+	<list>
+	"Process.h"
+	<iostream>
+	<vector>
+
+1386171925 c:\users\wojciech\documents\github\proj2\process.h
+	<vector>
+
+1386171925 source:c:\users\wojciech\documents\github\proj2\instance.cpp
+	"Instance.h"
+
+1386171925 c:\users\wojciech\documents\github\proj2\instance.h
+	<vector>
+	<list>
+	<fstream>
+	<ctime>
+	<iostream>
+	"procList.h"
+	"Analysis.h"
+	"myList.h"
+	"Process.h"
+
+1386171875 c:\users\wojciech\documents\github\proj2\proclist.h
+
+1386171925 c:\users\wojciech\documents\github\proj2\mylist.h
+	"Analysis.h"
+	<list>
+	<vector>
+	<ctime>
+	<cstdlib>
+	<algorithm>
+
+1386171925 source:c:\users\wojciech\documents\github\proj2\mylist.cpp
+	"myList.h"
+	<algorithm>
+	<ctime>
+	<cstdlib>
+	<vector>
+
+1386171875 source:c:\users\wojciech\documents\github\proj2\process.cpp
+	"Process.h"
+
+1386173209 source:c:\users\wojciech\documents\github\proj2\main.cpp
+	<iostream>
+	<list>
+	<fstream>
+	<ctime>
+	<cstdlib>
+	<string>
+	<sstream>
+	<cmath>
+	"Instance.h"
+
