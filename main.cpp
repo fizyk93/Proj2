@@ -67,7 +67,12 @@ int main(int argc, char* argv[])
         tmp/=10;
     }
     cout << i-4 << endl << endl;
+<<<<<<< HEAD
+    //temperature = pow(10,i-4);
+    temperature = 100;
+=======
     temperature = 100;//pow(10,i-4);
+>>>>>>> origin/Wojtek
 
     while(temperature>=1 && maxDiscard<=20)
     {
@@ -87,7 +92,7 @@ int main(int argc, char* argv[])
 
         if(newInstance->timer<bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
-            bestTime = newInstance->timer;
+            //bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
             maxDiscard = 0;
             output.close();
@@ -105,6 +110,15 @@ int main(int argc, char* argv[])
             cout << "Odrzucone\n";
             temperature*=coolingRate;
         }
+<<<<<<< HEAD
+
+        if(newInstance->timer>=bestTime)
+            temperature*=coolingRate;
+        else
+            bestTime = newInstance->timer;
+
+=======
+>>>>>>> origin/Wojtek
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
 //        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
