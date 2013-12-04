@@ -56,8 +56,13 @@ int main(int argc, char* argv[])
 
     output.close();
 
+    filename = argv[1];
+    filename = filename.substr(0,filename.find("."));
+    filename+="_new.txt";
+    output.open(filename.c_str());
+
     double temperature;
-    double coolingRate = 0.89;
+    double coolingRate = 0.99;
     int maxDiscard = 0;
 
     long tmp = bestTime;
@@ -66,18 +71,13 @@ int main(int argc, char* argv[])
         i++;
         tmp/=10;
     }
-    cout << i-4 << endl << endl;
-    temperature = pow(10,i-4);
+    //cout << i-4 << endl << endl;
+    temperature = 100;
 
-    while(temperature>=1 && maxDiscard<=20)
+    while(temperature>=1 && maxDiscard<=50)
     {
-        string tmpfilename = argv[1];
-        tmpfilename = tmpfilename.substr(0,tmpfilename.find("."));
-        tmpfilename+="_tmp.txt";
-        output.open(tmpfilename.c_str());
-
         Instance *newInstance = new Instance(processList, &output);
-        newInstance->timer+=1000;
+        //newInstance->timer+=1000;
         newInstance->startScheduler();
         newInstance->printSummary(filename);
 
@@ -89,21 +89,21 @@ int main(int argc, char* argv[])
         {
             Analysis::changeTime = Analysis::oldChangeTime;
             maxDiscard++;
-            output.close();
-            remove(tmpfilename.c_str());
             cout << "Odrzucone\n";
         }
         else if(newInstance->timer<=bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
         {
-            bestTime = newInstance->timer;
             Analysis::oldChangeTime = Analysis::changeTime;
             maxDiscard = 0;
-            output.close();
-            remove(filename.c_str());
-            std::rename(tmpfilename.c_str(),filename.c_str());
             cout << "Przyjete\n";
         }
-        temperature*=coolingRate;
+
+        if(newInstance->timer>bestTime)
+            temperature*=coolingRate;
+        else
+            bestTime = newInstance->timer;
+
+
 
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
@@ -112,6 +112,7 @@ int main(int argc, char* argv[])
 //            cout << "changeTime: " << *it << endl;
 //        }
 
+        output.close();
 
         delete newInstance;
 
