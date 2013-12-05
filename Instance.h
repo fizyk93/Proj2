@@ -29,9 +29,10 @@ public:
     int counter;
     long timer;
     list<long>::iterator changeIterator;
-    clock_t startTime, endTime;
+    float startTime, endTime, executionTime;
     bool change;
 
+    static int size;
     static list<Analysis> changeTime;
 
     static std::list<Analysis> listInitialize();

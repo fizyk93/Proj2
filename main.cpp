@@ -9,7 +9,7 @@
 #include "Instance.h"
 
 //Maksymalny czas trwania programu w milisekundach
-#define TIME 180000 //3 minuty
+#define MAX_TIME 180 //3 minuty
 ///TESTOWY KOMENTARZ
 
 ///Dodaje kolejny kretynski komentarz
@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
     //vector zawierajacy wszystkie procesory dostepne w danej chwili
 
     long bestTime;
+    float globalTime;
 
     ofstream output;
     string filename = argv[1];
@@ -40,11 +41,15 @@ int main(int argc, char* argv[])
 
     list<Process> processList = readProcList(argc, argv);
 
+    Instance::size = processList.size();
+
     Instance *mainInstance = new Instance(processList, &output);
 
     mainInstance->startScheduler();
 
     mainInstance->printSummary(filename);
+
+    globalTime = mainInstance->endTime;
 
     bestTime = mainInstance->timer;
 
@@ -56,57 +61,64 @@ int main(int argc, char* argv[])
 
     output.close();
 
-    double temperature;
-    double coolingRate = 0.99;
+    double temperature, chance, expo;
+    double coolingRate = 0.98;
     int maxDiscard = 0;
 
-    long tmp = bestTime;
-    int i = 0;
-    while(tmp>0) {
-        i++;
-        tmp/=10;
-    }
-    cout << i-4 << endl << endl;
-    temperature = 100;//pow(10,i-4);
+    temperature = bestTime/10000;//pow(10,i-4);
 
-    while(temperature>=1 && maxDiscard<=20)
+    while(temperature>=1 && maxDiscard<=30 && globalTime < MAX_TIME-5)
     {
+        cout << "GlobalTime: " << globalTime << " " << (double)(50.0/mainInstance->executionTime) << mainInstance->executionTime <<endl;
         string tmpfilename = argv[1];
         tmpfilename = tmpfilename.substr(0,tmpfilename.find("."));
         tmpfilename+="_tmp.txt";
         output.open(tmpfilename.c_str());
 
         Instance *newInstance = new Instance(processList, &output);
-        newInstance->timer+=1000;
         newInstance->startScheduler();
         newInstance->printSummary(filename);
 
-        double chance = (double(rand())/RAND_MAX)*100.0;
+        chance = (double(rand())/RAND_MAX)*100.0;
+        expo = exp((double(bestTime-newInstance->timer)/temperature))*100;
 
-        cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  exp((double(bestTime-newInstance->timer)/temperature))*100 << endl;
+        cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  expo  << " " << newInstance->timer << endl;
 
-        if(newInstance->timer<bestTime || chance<=exp((double(bestTime-newInstance->timer)/temperature))*100)
+        if( chance<=expo)
         {
-            bestTime = newInstance->timer;
+            cout << "Przyjete " << endl;
             Analysis::oldChangeTime = Analysis::changeTime;
-            maxDiscard = 0;
+            if(!(newInstance->timer==bestTime))   maxDiscard = 0;
+            else maxDiscard++;
             output.close();
-            remove(filename.c_str());
-            std::rename(tmpfilename.c_str(),filename.c_str());
-            cout << "Przyjete\n";
-            if(newInstance->timer >= bestTime) temperature*=coolingRate;
+
+            if(newInstance->timer<bestTime)
+            {
+                remove(filename.c_str());
+                std::rename(tmpfilename.c_str(),filename.c_str());
+            }
+
         }
-        else if(newInstance->timer >= bestTime)
+        else
         {
+            cout << "Odrzucone " << endl;
             Analysis::changeTime = Analysis::oldChangeTime;
             maxDiscard++;
             output.close();
             remove(tmpfilename.c_str());
-            cout << "Odrzucone\n";
-            temperature*=coolingRate;
         }
+
+        if(newInstance->timer>bestTime)
+            temperature*=coolingRate;
+        else
+            bestTime = newInstance->timer;
+
+        globalTime += newInstance->executionTime;
+
         Analysis::changeTime.merge(newInstance->a);
         Analysis::changeTime.unique();
+
+        cout << "size: " << Analysis::changeTime.size() << endl;
 //        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
 //        {
 //            cout << "changeTime: " << *it << endl;

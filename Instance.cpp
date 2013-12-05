@@ -1,5 +1,6 @@
 #include "Instance.h"
 
+int Instance::size = 0;
 list<Analysis> Instance::changeTime = listInitialize();
 
 list<Analysis> Instance::listInitialize()
@@ -28,7 +29,7 @@ Instance::Instance(list<Process> processList, std::ofstream *f)
 
 void Instance::startScheduler()
 {
-    startTime = clock();
+    startTime = (float)clock()/CLOCKS_PER_SEC;
 
     while(!processList.empty() || !readyList.empty() || !execList.empty())
     {
@@ -36,7 +37,7 @@ void Instance::startScheduler()
         //Listy procesow wchodzacych oraz listy czasow zakonczenia aktualnie dzialajacych zadan
         //Program wybiera z obu list ta, na ktorej znajduje sie najblizsze zadanie i przeskakuje do niego
 
-        if(rand()%5000 == rand()%5000)
+        if(size>=20 && rand()%(size/20) == rand()%(size/20))
         {
             a.push_back(timer);
         }
@@ -92,7 +93,7 @@ void Instance::startScheduler()
 
     }
 
-    endTime = clock();
+    endTime = (float)clock()/CLOCKS_PER_SEC;
 
 }
 
@@ -217,8 +218,8 @@ void Instance::printSummary(string filename)
     cout << "Czas uszeregowania na podstawie p_j: " << timer << endl;
     //Wypisanie wiadomosci koncowych oraz wyczyszczenie tablic
     cout << "Plik wynikowy " << filename << " zostal pomyslnie zapisany.\n";
-
-    cout << "Czas wykonania programu: " << (float)(endTime-startTime)/CLOCKS_PER_SEC << "s" << endl;
+    executionTime = endTime-startTime;
+    cout << "Czas wykonania programu: " << executionTime << "s" << endl;
 
     analysis.print();
 }

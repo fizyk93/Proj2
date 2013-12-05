@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1386171718 source:e:\ok\proj2\main.cpp
+1386235294 source:e:\ok\proj2\main.cpp
 	<iostream>
 	<list>
 	<fstream>
@@ -23,24 +23,24 @@
 	<list>
 	"procList.h"
 
-1386063812 source:e:\ok\proj2\analysis.cpp
+1386173940 source:e:\ok\proj2\analysis.cpp
 	"Analysis.h"
 	<cstdio>
 	<list>
 
-1386063776 e:\ok\proj2\analysis.h
+1386173940 e:\ok\proj2\analysis.h
 	<list>
 	"Process.h"
 	<iostream>
 	<vector>
 
-1385675476 e:\ok\proj2\process.h
+1386173940 e:\ok\proj2\process.h
 	<vector>
 
-1386065791 source:e:\ok\proj2\instance.cpp
+1386235514 source:e:\ok\proj2\instance.cpp
 	"Instance.h"
 
-1385733452 e:\ok\proj2\instance.h
+1386195782 e:\ok\proj2\instance.h
 	<vector>
 	<list>
 	<fstream>
@@ -51,7 +51,7 @@
 	"myList.h"
 	"Process.h"
 
-1385733628 e:\ok\proj2\mylist.h
+1386173940 e:\ok\proj2\mylist.h
 	"Analysis.h"
 	<list>
 	<vector>
@@ -59,7 +59,7 @@
 	<cstdlib>
 	<algorithm>
 
-1385669195 source:e:\ok\proj2\mylist.cpp
+1386173940 source:e:\ok\proj2\mylist.cpp
 	"myList.h"
 	<algorithm>
 	<ctime>
