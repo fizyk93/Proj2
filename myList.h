@@ -19,8 +19,6 @@ public:
     void push_front(const T& val);
     void shuffle();
     void print();
-
-
 };
 
 template <class T>
@@ -65,13 +63,4 @@ void myList<T>::print()
     std::cout << std::endl;
 }
 
-//class myList :
-//    public std::list<Analysis>
-//{
-//    public:
-//
-//    void push(Analysis x);
-//
-//    void print();
-//};
 #endif // MYLIST_H

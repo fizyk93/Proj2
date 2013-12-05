@@ -32,6 +32,8 @@ int main(int argc, char* argv[])
 
     long bestTime;
     float globalTime;
+    double temperature, chance, probability, coolingRate;
+    int maxDiscard = 0;
 
     ofstream output;
     string filename = argv[1];
@@ -46,30 +48,22 @@ int main(int argc, char* argv[])
     Instance *mainInstance = new Instance(processList, &output);
 
     mainInstance->startScheduler();
-
     mainInstance->printSummary(filename);
 
     globalTime = mainInstance->endTime;
-
     bestTime = mainInstance->timer;
 
-    Analysis::changeTime = mainInstance->a;
-//    for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
-//    {
-//        cout << "changeTime: " << *it << endl;
-//    }
+    Instance::changeTime = mainInstance->newChangeTime;
 
     output.close();
 
-    double temperature, chance, expo;
-    double coolingRate = 0.98;
-    int maxDiscard = 0;
-
-    temperature = bestTime/10000;//pow(10,i-4);
+    temperature = bestTime/20000;
+    coolingRate = 0.98;
 
     while(temperature>=1 && maxDiscard<=30 && globalTime < MAX_TIME-5)
     {
-        cout << "GlobalTime: " << globalTime << " " << (double)(50.0/mainInstance->executionTime) << mainInstance->executionTime <<endl;
+        cout << "GlobalTime: " << globalTime <<endl;
+        cout << "ChangeTime list size: " << Instance::changeTime.size() << endl;
         string tmpfilename = argv[1];
         tmpfilename = tmpfilename.substr(0,tmpfilename.find("."));
         tmpfilename+="_tmp.txt";
@@ -80,14 +74,14 @@ int main(int argc, char* argv[])
         newInstance->printSummary(filename);
 
         chance = (double(rand())/RAND_MAX)*100.0;
-        expo = exp((double(bestTime-newInstance->timer)/temperature))*100;
+        probability = exp((double(bestTime-newInstance->timer)/temperature))*100;
 
-        cout << "Temperatura: " << temperature << " Chance: " << chance << " exp: " <<  expo  << " " << newInstance->timer << endl;
+        cout << "Temperatura: " << temperature << " chance: " << chance << " probability: " <<  probability  << " " << newInstance->timer << endl;
 
-        if( chance<=expo)
+        if( chance<=probability)
         {
             cout << "Przyjete " << endl;
-            Analysis::oldChangeTime = Analysis::changeTime;
+            Instance::prevChangeTime = Instance::changeTime;
             if(!(newInstance->timer==bestTime))   maxDiscard = 0;
             else maxDiscard++;
             output.close();
@@ -102,7 +96,7 @@ int main(int argc, char* argv[])
         else
         {
             cout << "Odrzucone " << endl;
-            Analysis::changeTime = Analysis::oldChangeTime;
+            Instance::changeTime = Instance::prevChangeTime;
             maxDiscard++;
             output.close();
             remove(tmpfilename.c_str());
@@ -115,15 +109,10 @@ int main(int argc, char* argv[])
 
         globalTime += newInstance->executionTime;
 
-        Analysis::changeTime.merge(newInstance->a);
-        Analysis::changeTime.unique();
+        Instance::changeTime.merge(newInstance->newChangeTime);
+        Instance::changeTime.unique();
 
-        cout << "size: " << Analysis::changeTime.size() << endl;
-//        for(list<long>::iterator it = Analysis::changeTime.begin(); it != Analysis::changeTime.end(); it++)
-//        {
-//            cout << "changeTime: " << *it << endl;
-//        }
-
+        cout << "\n############################################################################################\n\n";
 
         delete newInstance;
 
@@ -131,7 +120,7 @@ int main(int argc, char* argv[])
 
     delete mainInstance;
 
-    cout << "mainInstance: " << mainInstance->timer << " bestTime: " << bestTime << endl;
+    cout << "Wynik:\n\nmainInstance: " << mainInstance->timer << " bestTime: " << bestTime << endl;
 
     return 0;
 }

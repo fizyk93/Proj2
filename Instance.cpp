@@ -1,16 +1,9 @@
 #include "Instance.h"
 
 int Instance::size = 0;
-list<Analysis> Instance::changeTime = listInitialize();
 
-list<Analysis> Instance::listInitialize()
-{
-    list<Analysis> l;
-    list<Process> p;
-    p.push_back(Process(-1, -1, -1, -1));
-    l.push_back(Analysis(-1, -1, p));
-    return l;
-}
+list<long> Instance::changeTime = list<long>();
+list<long> Instance::prevChangeTime = list<long>();
 
 Instance::Instance(list<Process> processList, std::ofstream *f)
 {
@@ -18,13 +11,8 @@ Instance::Instance(list<Process> processList, std::ofstream *f)
     output = f;
     counter = Process::maxProcs;
     for(long i=counter; i >= 1; i--) processors.push_back(i);
-    changeIterator = Analysis::changeTime.begin();
+    changeIterator = changeTime.begin();
     timer = 0;
-    Analysis::unsucceed = 0;
-    change = false;
-    analysis = myList<Analysis>(10);
-    ita = a.begin();
-
 }
 
 void Instance::startScheduler()
@@ -39,10 +27,10 @@ void Instance::startScheduler()
 
         if(size>=20 && rand()%(size/20) == rand()%(size/20))
         {
-            a.push_back(timer);
+            newChangeTime.push_back(timer);
         }
 
-        while(timer >= *changeIterator && changeIterator != Analysis::changeTime.end())
+        while(timer >= *changeIterator && changeIterator != changeTime.end())
             changeIterator++;
 
         if(!processList.empty() && !finishTimes.empty())
@@ -51,7 +39,6 @@ void Instance::startScheduler()
             {
                 timer = processList.front().ready;
                 updateReady();
-                //readyList.sort(sortReady);
             }
             else
             {
@@ -64,7 +51,6 @@ void Instance::startScheduler()
         {
             timer = processList.front().ready;
             updateReady();
-            //readyList.sort(sortReady);
         }
         else if(processList.empty() && !finishTimes.empty())
         {
@@ -73,19 +59,9 @@ void Instance::startScheduler()
             terminateProc();
         }
 
-//        if(timer == changeTime || finishTimes.front() == changeTime || processList.front().ready == changeTime)
-        if(change)
+        if(timer >= *changeIterator && changeIterator != changeTime.end() && !readyList.empty())
         {
-            //cout << "Hello! " << timer << " Unused procs: " << counter <<endl;
-            readyList.sort(sortChange);
-        }
-
-        if(timer >= *changeIterator && changeIterator != Analysis::changeTime.end() && !readyList.empty())
-        {
-            //cout << readyList.begin()->id << "\t";
             readyList.shuffle();
-
-            //cout << readyList.begin()->id << "\t" << readyList.size() << "\n";
         }
 
         runProc();
@@ -95,18 +71,6 @@ void Instance::startScheduler()
 
     endTime = (float)clock()/CLOCKS_PER_SEC;
 
-}
-
-//Wlasna funkcja sortowania potrzebna do dzialania programu
-bool Instance::sortReady(Process a, Process b)
-{
-    return (a.exec > b.exec);
-}
-
-bool Instance::sortChange(Process a, Process b)
-{
-//    cout << "hello!\n";
-    return (a.nproc > b.nproc);
 }
 
 //Funkcja wypisuje wszystkie procesy na konsole
@@ -126,8 +90,6 @@ void Instance::updateReady()
         it++;
         processList.pop_front();
     }
-    //readyList.sort(sortReady);
-
 }
 
 
@@ -156,39 +118,28 @@ void Instance::terminateProc()
 }
 
 //Funkcja przydzielajaca procesory procesom oraz przenoszaca je z listy "ready" na liste "exec"
-void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, list<Process> *r, long *counter,vector<int> *proc, myList& an)
+void Instance::runProc()
 {
-    //list<Process> tmp = *r;
     for(myList<Process>::iterator it = readyList.begin(); it != readyList.end() && counter != 0 && !(readyList.empty());)
     {
 
-        if(it->nproc <= counter) //jezeli zadanie
+        if(it->nproc <= counter)
         {
-//            if(*changeIterator == -1) cout << "Hello!\n";
-//            cout << "#################\t" << timer;
-//            printProcList(readyList);
+
 
             it->start = timer; //faktyczny czas rozpoczecia zadania
             it->finish = timer + it->exec; //faktyczny czas zakonczenia zadania
             long i = it->nproc; //dodawanie procesorow do zadania
-           // cout << it->id << " " << i << endl; system("PAUSE");
+
             while(i>0)
             {
-                //if((*proc).empty()) { cout << "BLAD"; system("PAUSE"); }
-
                 i--;
                 it->processors.push_back(processors[processors.size()-1]); //procesory z proc sa przenoszone do wektora procesorow uzywanych przez zadanie
                 processors.pop_back();
             }
-            //if(it->processors.size() != it->nproc) { cout << "BLAD " << it->id; system("PAUSE"); }
+
             execList.push_back(*it); //zadanie trafia na liste procesow wykonywanych
             finishTimes.push_back(it->finish); //czas zakonczenia zadania trafia na liste zawierajaca czasy zakonczenia dzialajacych zadan
-//            if(timer >= *changeIterator)
-//            {
-//                change = false;
-//                changeIterator++;
-//            }
-//            if(it->finish >= *changeIterator && timer <= *changeIterator) change = true;
 
             counter -= it->nproc;
             it=readyList.erase(it);
@@ -197,17 +148,6 @@ void Instance::runProc()//long time, list<long> *finishTimes, list<Process> *x, 
         else
         {
             it++;
-//            if(it == readyList.end())
-//                if(readyList.empty() || counter == 0 || (change && counter-it->nproc < analysis.begin()->readyTasks.begin()->nproc && timer < *changeIterator))
-//                {
-////                    cout << "Hello!\n";
-//                    Analysis::succeed++;
-//                }
-//                else
-//                {
-//                    analysis.push_front(Analysis(timer, counter, readyList));
-//                    Analysis::unsucceed++;
-//                }
         }
     }
     finishTimes.sort(); //lista czasow w ktorych koncza sie zadania jest sortowana
@@ -219,7 +159,5 @@ void Instance::printSummary(string filename)
     //Wypisanie wiadomosci koncowych oraz wyczyszczenie tablic
     cout << "Plik wynikowy " << filename << " zostal pomyslnie zapisany.\n";
     executionTime = endTime-startTime;
-    cout << "Czas wykonania programu: " << executionTime << "s" << endl;
-
-    analysis.print();
+    cout << "Czas wykonania programu: " << executionTime << "s" << endl << endl;
 }
